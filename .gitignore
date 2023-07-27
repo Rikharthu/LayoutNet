@@ -1,0 +1,15 @@
+/data/*
+/out/*
+/model/*
+
+/result/res_lsun_ts_512_joint/cor/*
+/result/res_lsun_ts_512_joint/cor_mat/*
+/result/res_lsun_ts_512_joint/cor_mat_flip/*
+/result/res_lsun_ts_512_joint/edg/*
+/result/res_lsun_ts_512_joint/img/*
+/result/res_lsun_ts_512_joint/mat_ts_v73/*
+/result/res_lsun_ts_512_joint/type/*
+
+/result/res/panofull_ts_box_joint/cor/*
+/result/res/panofull_ts_box_joint/edg/*
+/result/res/panofull_ts_box_joint/img/*

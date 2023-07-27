@@ -4,7 +4,9 @@ torch.setdefaulttensortype('torch.FloatTensor')
 require 'nngraph'
 local model_utils=require 'model_utils'
 local matio = require 'matio'
+-- require 'cunn'
 require 'image'
+-- require 'cudnn'
 require 'sys'
 
 -- make model
@@ -125,14 +127,19 @@ local ref4 = nn.Linear(64, 11)(ref3_relu)
 
 model.core = nn.gModule({input_x},{deconv6_sf, deconv6_sf_c, ref4})
 
-params = torch.load('./model/perspfull_lsun_type_pretrained.t7')
+-- model.core:cuda()
 
+print('Loading model weights...')
+params = torch.load('./model/perspfull_lsun_type_pretrained.t7')
+print('Model weights loaded')
+
+print('Loading model parameters...')
 model_params, grad_params = model_utils.combine_all_parameters(model.core)
 model_params = model_params:copy(params)
-
-model.core = model.core:float()
+print('Model parameters loaded')
 
 -- get testing dataset
+print('Getting test data...')
 img_ts = torch.load('./data/lsun_img_val.t7')
 edg_ts = torch.load('./data/lsun_edg_val.t7')
 juc_ts = torch.load('./data/lsun_juc_val.t7')
@@ -167,39 +174,15 @@ for i = 1, ts_size do
         gtMat_a = torch.cat(gtMat, gtMat_f, 1)
         gt2Mat_a = torch.cat(gt2Mat, gt2Mat_f, 1)
 
-        print('Feeding sample to model')
-        float_input = torch.FloatTensor(inputMat_a:size()):copy(inputMat_a)
-        -- output_a = model.core:forward(inputMat_a)
-        output_a = model.core:forward(float_input)
-        print('Inference complete')
-        print(output_a)
-        -- {
-        --         1 : FloatTensor - size: 2x3x512x512
-        --         2 : FloatTensor - size: 2x8x512x512
-        --         3 : FloatTensor - size: 2x11
-        -- }
-        -- print('Saving intermediate results')
-        -- matio.save('./result/res_lsun_ts_512_joint/output_a_1.mat', output_a[1])
-        -- matio.save('./result/res_lsun_ts_512_joint/output_a_2.mat', output_a[2])
-        -- matio.save('./result/res_lsun_ts_512_joint/output_a_3.mat', output_a[3])
-
-	-- img = torch.reshape(inputMat, 3, 512, 512)
-	-- image.save( './result/res_lsun_ts_512_joint/image.png', img)
-        
-        print('Intermediate results saved')
-
-
-        -- For some reason it doesn't work on float here
-        output_a[1] = output_a[1]:double()
-        output_a[2] = output_a[2]:double()
-        output_a[3] = output_a[3]:double()
+        print('Performing forward pass')
+        output_a = model.core:forward(inputMat_a)
+        print('Forward pass finished')
 	
         loss_c = model.criterion:forward(output_a[1], gtMat_a) + loss_l
         loss_l = model.criterion:forward(output_a[2], gt2Mat_a) + loss_c
         -- save img
 	img = torch.reshape(inputMat, 3, 512, 512)
-	image.save( './result/res_lsun_ts_512_joint/img/'..i..'.png', img)
-        
+	image.save( '../result/res_lsun_ts_512_joint/img/'..i..'.png', img)
 	
         -- save edge
         output_l = torch.zeros(2, 8, 512, 512)
@@ -215,18 +198,18 @@ for i = 1, ts_size do
 
 	out_edg = torch.mean(output_c:double(), 1)
 	out_edg = torch.reshape(out_edg[{{1},{},{},{}}], 3, 512, 512)
-        image.save( './result/res_lsun_ts_512_joint/edg/'..i..'.png', out_edg)
+        image.save( '../result/res_lsun_ts_512_joint/edg/'..i..'.png', out_edg)
 
         out_edg = output_l_a[{{1},{},{},{}}]
-        matio.save('./result/res_lsun_ts_512_joint/cor_mat/'..i..'.mat', torch.reshape(out_edg, 8, 512, 512))
+        matio.save('../result/res_lsun_ts_512_joint/cor_mat/'..i..'.mat', torch.reshape(out_edg, 8, 512, 512))
         out_edg = output_l_a[{{2},{},{},{}}]
-        matio.save('./result/res_lsun_ts_512_joint/cor_mat_flip/'..i..'.mat', torch.reshape(out_edg, 8, 512, 512))
+        matio.save('../result/res_lsun_ts_512_joint/cor_mat_flip/'..i..'.mat', torch.reshape(out_edg, 8, 512, 512))
         out_edg = torch.max(out_edg, 2)
         out_edg = torch.reshape(out_edg[{{1},{},{},{}}], 512, 512)
-        image.save( './result/res_lsun_ts_512_joint/cor/'..i..'.png', out_edg)
+        image.save( '../result/res_lsun_ts_512_joint/cor/'..i..'.png', out_edg)
 
         r_type = output_a[3]:double()
-        matio.save( './result/res_lsun_ts_512_joint/type/'..i..'.mat', r_type) 
+        matio.save( '../result/res_lsun_ts_512_joint/type/'..i..'.mat', r_type) 
 end
 
 print(loss_l/ts_size)

@@ -1,9 +1,9 @@
 
 addpath(genpath('./LSUN/toolkit'))
 data_path = './LSUN/';
-val_set = load([data_path '/test.mat']);
+val_set = load([data_path '/testing.mat']);
 % test list
-nl = val_set.test;
+nl = val_set.testing;
 name_list = {nl.image};
 
 % match test images in .t7 file with the gt name for evaluation
@@ -44,7 +44,9 @@ for i = 1:1000
     end
 
     room_t = type(RecordId);
-    im_ori = imread([data_path 'image/images/' tline(1:end-4) '.jpg']);
+    % FIXME: replaced
+    % im_ori = imread([data_path 'image/images/' tline(1:end-4) '.jpg']);
+    im_ori = imread(['../result/res_lsun_ts_512_joint/img/' num2str(i) '.png']);
     %im_res = nl(idx).resolution;
     im_res(1) = size(im_ori,1);
     im_res(2) = size(im_ori,2);
