@@ -19,29 +19,29 @@ type(8).cornermap = [1 3 7 5];
 im_h = 512;
 im_w = 512;
 
-i = 1186
+i = 100
     
     
 disp(i);
 
 % im = imread(['../data/lsun_ts/img/' tline]);
-img = imread(['/home/richard/Development/pytorch-layoutnet-perspective/res/lsun_tr/img/' num2str(i) '.png']);
+img = imread(['/home/richard/Development/pytorch-layoutnet-perspective/res/lsun_tr_gt/img/' num2str(i) '.png']);
 
 % edg = imread(['../result/res_lsun_ts_512_joint/edg/' num2str(i) '.png']);
-edg = imread(['/home/richard/Development/pytorch-layoutnet-perspective/res/lsun_tr/edg/' num2str(i) '.png']);
+edg = imread(['/home/richard/Development/pytorch-layoutnet-perspective/res/lsun_tr_gt/edg/' num2str(i) '.png']);
 % corn = load(['../result/res_lsun_ts_512_joint/cor_mat/' num2str(i) '.mat']); 
-corn = load(['/home/richard/Development/pytorch-layoutnet-perspective/res/lsun_tr/cor_mat/' num2str(i) '.mat']);
+corn = load(['/home/richard/Development/pytorch-layoutnet-perspective/res/lsun_tr_gt/cor_mat/' num2str(i) '.mat']);
 corn = corn.x;
 corn = permute(corn,[2,3,1]);
 % corn_f = load(['../result/res_lsun_ts_512_joint/cor_mat_flip/' num2str(i) '.mat']); 
-corn_f = load(['/home/richard/Development/pytorch-layoutnet-perspective/res/lsun_tr/cor_mat_flip/' num2str(i) '.mat']);
+corn_f = load(['/home/richard/Development/pytorch-layoutnet-perspective/res/lsun_tr_gt/cor_mat_flip/' num2str(i) '.mat']);
 corn_f = corn_f.x;
 corn_f = permute(corn_f,[2,3,1]);
 
 % find room type
 if 1
     % r_t = load(['../result/res_lsun_ts_512_joint/type/' num2str(i) '.mat']); 
-    r_t = load(['/home/richard/Development/pytorch-layoutnet-perspective/res/lsun_tr/type/' num2str(i) '.mat'])
+    r_t = load(['/home/richard/Development/pytorch-layoutnet-perspective/res/lsun_tr_gt/type/' num2str(i) '.mat'])
     r_t = r_t.x;
     r_t = mean(r_t);
     [~,RecordId] = max(r_t);
@@ -55,7 +55,7 @@ end
 room_t = type(RecordId);
 % im_ori = imread([data_path 'image/images/' tline(1:end-4) '.jpg']);
 % im_ori = imread(['../result/res_lsun_ts_512_joint/img/' num2str(i) '.png']);
-im_ori = imread(['/home/richard/Development/pytorch-layoutnet-perspective/res/lsun_tr/img/' num2str(i) '.png']);
+im_ori = imread(['/home/richard/Development/pytorch-layoutnet-perspective/res/lsun_tr_gt/img/' num2str(i) '.png']);
 
 %im_res = nl(idx).resolution;
 im_res(1) = size(im_ori,1);
@@ -133,20 +133,44 @@ if room_t.typeid == 1
     corn_f(:,:,1)=max(corn_f(:,:,1)-b,0); 
     corn_f(:,:,7)=max(corn_f(:,:,7)-a,0);
 end
-% if room_t.typeid == 2
-%     corn_t = corn_f(:,:,2); corn_f(:,:,2) = corn_f(:,:,8); corn_f(:,:,8) = corn_t;
-%     corn_t = corn_f(:,:,1); corn_f(:,:,1) = corn_f(:,:,7); corn_f(:,:,7) = corn_t;
-%     corn_t = corn_f(:,:,3); corn_f(:,:,3) = corn_f(:,:,5); corn_f(:,:,5) = corn_t;
-%     corn(:,:,1) = max(0,corn(:,:,1) - corn(:,:,2));
-%     corn(:,:,7) = max(0,corn(:,:,7) - corn(:,:,8));
-%     corn_f(:,:,1) = max(0,corn_f(:,:,1) - corn_f(:,:,2));
-%     corn_f(:,:,7) = max(0,corn_f(:,:,7) - corn_f(:,:,8));
-% 
-%     a = corn(:,:,5); b = corn(:,:,3); corn(:,:,5)=max(corn(:,:,5)-b, 0); corn(:,:,3)=max(corn(:,:,3)-a,0);
-%     a = corn(:,:,1); b = corn(:,:,7); corn(:,:,1)=max(corn(:,:,1)-b,0); corn(:,:,7)=max(corn(:,:,7)-a,0);
-%     a = corn_f(:,:,5); b = corn_f(:,:,3); corn_f(:,:,5)=max(corn_f(:,:,5)-b,0); corn_f(:,:,3)=max(corn_f(:,:,3)-a,0);
-%     a = corn_f(:,:,1); b = corn_f(:,:,7); corn_f(:,:,1)=max(corn_f(:,:,1)-b,0); corn_f(:,:,7)=max(corn_f(:,:,7)-a,0);
-% end
+if room_t.typeid == 2
+    corn_t = corn_f(:,:,2); 
+    corn_f(:,:,2) = corn_f(:,:,8); 
+    corn_f(:,:,8) = corn_t;
+    
+    corn_t = corn_f(:,:,1); 
+    corn_f(:,:,1) = corn_f(:,:,7); 
+    corn_f(:,:,7) = corn_t;
+    
+    corn_t = corn_f(:,:,3); 
+    corn_f(:,:,3) = corn_f(:,:,5); 
+    corn_f(:,:,5) = corn_t;
+    
+    corn(:,:,1) = max(0,corn(:,:,1) - corn(:,:,2));
+    corn(:,:,7) = max(0,corn(:,:,7) - corn(:,:,8));
+    corn_f(:,:,1) = max(0,corn_f(:,:,1) - corn_f(:,:,2));
+    corn_f(:,:,7) = max(0,corn_f(:,:,7) - corn_f(:,:,8));
+
+    a = corn(:,:,5); 
+    b = corn(:,:,3); 
+    corn(:,:,5)=max(corn(:,:,5)-b,0); 
+    corn(:,:,3)=max(corn(:,:,3)-a,0);
+    
+    a = corn(:,:,1); 
+    b = corn(:,:,7); 
+    corn(:,:,1)=max(corn(:,:,1)-b,0); 
+    corn(:,:,7)=max(corn(:,:,7)-a,0);
+    
+    a = corn_f(:,:,5); 
+    b = corn_f(:,:,3); 
+    corn_f(:,:,5)=max(corn_f(:,:,5)-b,0); 
+    corn_f(:,:,3)=max(corn_f(:,:,3)-a,0);
+    
+    a = corn_f(:,:,1); 
+    b = corn_f(:,:,7); 
+    corn_f(:,:,1)=max(corn_f(:,:,1)-b,0); 
+    corn_f(:,:,7)=max(corn_f(:,:,7)-a,0);
+end
 % if room_t.typeid == 3
 %     corn_t = corn_f(:,:,1); corn_f(:,:,1) = corn_f(:,:,8);corn_f(:,:,8) = corn_t;
 %     corn(:,:,7) = max(0,corn(:,:,7) - corn(:,:,1));
@@ -216,7 +240,9 @@ end
 %     keyboard
 % end
 if room_t.typeid == 9
-    corn_t = corn_f(:,:,3); corn_f(:,:,3) = corn_f(:,:,5);corn_f(:,:,5) = corn_t;
+    corn_t = corn_f(:,:,3); 
+    corn_f(:,:,3) = corn_f(:,:,5);
+    corn_f(:,:,5) = corn_t;
 end
 
 
@@ -268,15 +294,15 @@ for j = 1:numel(room_t.cornermap)
             mp_msk = edg(:,:,3) >255*0.1;
         end
     end
-%     if room_t.typeid == 2
-%         keyboard
-%         if room_t.cornermap(j) == 2 || room_t.cornermap(j) == 8
-%             mp_msk = edg(:,:,1) >255*0.1;
-%         end
-%         if room_t.cornermap(j) == 5 || room_t.cornermap(j) == 3 || room_t.cornermap(j) == 1 || room_t.cornermap(j) == 7
-%             mp_msk = edg(:,:,2) >255*0.1;
-%         end
-%     end
+    if room_t.typeid == 2
+        % keyboard
+        if room_t.cornermap(j) == 2 || room_t.cornermap(j) == 8
+            mp_msk = edg(:,:,1) >255*0.1;
+        end
+        if room_t.cornermap(j) == 5 || room_t.cornermap(j) == 3 || room_t.cornermap(j) == 1 || room_t.cornermap(j) == 7
+            mp_msk = edg(:,:,2) >255*0.1;
+        end
+    end
 %     if room_t.typeid == 3
 %         if room_t.cornermap(j) == 1 || room_t.cornermap(j) == 8
 %             mp_msk = edg(:,:,1) >255*0.1;
@@ -474,9 +500,9 @@ if room_t.typeid == 1
     X = seg2poly(s1, P); 
     point_ref(6,:) = X';
 end
-% if room_t.typeid == 2
-%     keyboard
-% end
+if room_t.typeid == 2
+    % keyboard
+end
 % if room_t.typeid == 3
 %     line_1 = polyfit([point(1,1) point(2,1)], [point(1,2) point(2,2)], 1);
 %     s1 = zeros(2,2); s1(:,1) = [point(1,1); point(1,2)];
@@ -574,12 +600,16 @@ end
 % end
 if room_t.typeid == 9
     line_1 = polyfit([point(1,1) point(2,1)], [point(1,2) point(2,2)], 1);
-    s1 = zeros(2,2); s1(:,1) = [point(1,1); point(1,2)];
+    s1 = zeros(2,2); 
+    s1(:,1) = [point(1,1); point(1,2)];
     s1(:,2) = [-100; -100*line_1(1) + line_1(2)];
-    X = seg2poly(s1, P); point_ref(1,:) = X';
-    s1 = zeros(2,2); s1(:,1) = [point(2,1); point(2,2)];
+    X = seg2poly(s1, P); 
+    point_ref(1,:) = X';
+    s1 = zeros(2,2); 
+    s1(:,1) = [point(2,1); point(2,2)];
     s1(:,2) = [10000; 10000*line_1(1) + line_1(2)];
-    X = seg2poly(s1, P); point_ref(2,:) = X';
+    X = seg2poly(s1, P); 
+    point_ref(2,:) = X';
 end
 % if room_t.typeid == 10
 %     line_1 = polyfit([point(1,1) point(2,1)], [point(1,2) point(2,2)], 1);
