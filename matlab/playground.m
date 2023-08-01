@@ -19,7 +19,7 @@ type(8).cornermap = [1 3 7 5];
 im_h = 512;
 im_w = 512;
 
-i = 100
+i = 993
     
     
 disp(i);
@@ -171,15 +171,20 @@ if room_t.typeid == 2
     corn_f(:,:,1)=max(corn_f(:,:,1)-b,0); 
     corn_f(:,:,7)=max(corn_f(:,:,7)-a,0);
 end
-% if room_t.typeid == 3
-%     corn_t = corn_f(:,:,1); corn_f(:,:,1) = corn_f(:,:,8);corn_f(:,:,8) = corn_t;
-%     corn(:,:,7) = max(0,corn(:,:,7) - corn(:,:,1));
-%     corn_f(:,:,7) = max(0,corn_f(:,:,7) - corn_f(:,:,1));
-%     corn(:,:,7) = max(0,corn(:,:,7) - corn(:,:,8));
-%     corn_f(:,:,7) = max(0,corn_f(:,:,7) - corn_f(:,:,8));
-%     corn(:,:,5) = max(0,corn(:,:,5) - corn(:,:,3));
-%     corn_f(:,:,5) = max(0,corn_f(:,:,5) - corn_f(:,:,3));
-% end
+if room_t.typeid == 3
+    corn_t = corn_f(:,:,1); 
+    corn_f(:,:,1) = corn_f(:,:,8);
+    corn_f(:,:,8) = corn_t;
+    
+    corn(:,:,7) = max(0,corn(:,:,7) - corn(:,:,1));
+    corn_f(:,:,7) = max(0,corn_f(:,:,7) - corn_f(:,:,1));
+    
+    corn(:,:,7) = max(0,corn(:,:,7) - corn(:,:,8));
+    corn_f(:,:,7) = max(0,corn_f(:,:,7) - corn_f(:,:,8));
+    
+    corn(:,:,5) = max(0,corn(:,:,5) - corn(:,:,3));
+    corn_f(:,:,5) = max(0,corn_f(:,:,5) - corn_f(:,:,3));
+end
 if room_t.typeid == 4
     corn_t = corn_f(:,:,3);
     corn_f(:,:,3) = corn_f(:,:,6);
@@ -303,14 +308,14 @@ for j = 1:numel(room_t.cornermap)
             mp_msk = edg(:,:,2) >255*0.1;
         end
     end
-%     if room_t.typeid == 3
-%         if room_t.cornermap(j) == 1 || room_t.cornermap(j) == 8
-%             mp_msk = edg(:,:,1) >255*0.1;
-%         end
-%         if room_t.cornermap(j) == 5 || room_t.cornermap(j) == 7
-%             mp_msk = edg(:,:,2) >255*0.1;
-%         end
-%     end
+    if room_t.typeid == 3
+        if room_t.cornermap(j) == 1 || room_t.cornermap(j) == 8
+            mp_msk = edg(:,:,1) >255*0.1;
+        end
+        if room_t.cornermap(j) == 5 || room_t.cornermap(j) == 7
+            mp_msk = edg(:,:,2) >255*0.1;
+        end
+    end
     if room_t.typeid == 4
         if room_t.cornermap(j) == 5
             mp_msk = edg(:,:,2) >255*0.1;
@@ -503,20 +508,28 @@ end
 if room_t.typeid == 2
     % keyboard
 end
-% if room_t.typeid == 3
-%     line_1 = polyfit([point(1,1) point(2,1)], [point(1,2) point(2,2)], 1);
-%     s1 = zeros(2,2); s1(:,1) = [point(1,1); point(1,2)];
-%     s1(:,2) = [-100; -100*line_1(1) + line_1(2)];
-%     X = seg2poly(s1, P); point_ref(2,:) = X';
-%     line_1 = polyfit([point(1,1) point(4,1)], [point(1,2) point(4,2)], 1);
-%     s1 = zeros(2,2); s1(:,1) = [point(1,1); point(1,2)];
-%     s1(:,2) = [100000; 100000*line_1(1) + line_1(2)];
-%     X = seg2poly(s1, P); point_ref(4,:) = X';
-%     line_1 = polyfit([point(1,1) point(3,1)], [point(1,2) point(3,2)], 1);
-%     s1 = zeros(2,2); s1(:,1) = [point(1,1); point(1,2)];
-%     s1(:,2) = [(10000-line_1(2))/line_1(1);10000];
-%     X = seg2poly(s1, P); point_ref(3,:) = X';
-% end
+if room_t.typeid == 3
+    line_1 = polyfit([point(1,1) point(2,1)], [point(1,2) point(2,2)], 1);
+    s1 = zeros(2,2); 
+    s1(:,1) = [point(1,1); point(1,2)];
+    s1(:,2) = [-100; -100*line_1(1) + line_1(2)];
+    X = seg2poly(s1, P); 
+    point_ref(2,:) = X';
+    
+    line_1 = polyfit([point(1,1) point(4,1)], [point(1,2) point(4,2)], 1);
+    s1 = zeros(2,2); 
+    s1(:,1) = [point(1,1); point(1,2)];
+    s1(:,2) = [100000; 100000*line_1(1) + line_1(2)];
+    X = seg2poly(s1, P); 
+    point_ref(4,:) = X';
+    
+    line_1 = polyfit([point(1,1) point(3,1)], [point(1,2) point(3,2)], 1);
+    s1 = zeros(2,2); 
+    s1(:,1) = [point(1,1); point(1,2)];
+    s1(:,2) = [(10000-line_1(2))/line_1(1);10000];
+    X = seg2poly(s1, P); 
+    point_ref(3,:) = X';
+end
 if room_t.typeid == 4
     line_1 = polyfit([point(1,1) point(2,1)], [point(1,2) point(2,2)], 1);
     s1 = zeros(2,2);
