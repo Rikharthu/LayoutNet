@@ -19,7 +19,7 @@ type(8).cornermap = [1 3 7 5];
 im_h = 512;
 im_w = 512;
 
-i = 993
+i = 109
     
     
 disp(i);
@@ -238,12 +238,12 @@ if room_t.typeid == 6
     save("corn_t.mat", "corn_t")
     save("corn_f.mat", "corn_f")
 end
-% if room_t.typeid == 7
-%     keyboard
-% end
-% if room_t.typeid == 8
-%     keyboard
-% end
+if room_t.typeid == 7
+    % keyboard
+end
+if room_t.typeid == 8
+    % keyboard
+end
 if room_t.typeid == 9
     corn_t = corn_f(:,:,3); 
     corn_f(:,:,3) = corn_f(:,:,5);
@@ -375,11 +375,11 @@ for j = 1:numel(room_t.cornermap)
             mp_msk = edg(:,:,3) >255*0.1;
         end
     end
-%      if room_t.typeid == 10
-%         if room_t.cornermap(j) == 5 || room_t.cornermap(j) == 7
-%             mp_msk = edg(:,:,2) >255*0.1;
-%         end
-%     end
+     if room_t.typeid == 10
+        if room_t.cornermap(j) == 5 || room_t.cornermap(j) == 7
+            mp_msk = edg(:,:,2) >255*0.1;
+        end
+    end
     if room_t.typeid == 0
         if room_t.cornermap(j) == 5 || room_t.cornermap(j) == 3
             mp_msk = edg(:,:,2) >255*0.1;
@@ -605,12 +605,12 @@ if room_t.typeid == 6
     s1(:,2) = [10000; 10000*line_1(1) + line_1(2)];
     X = seg2poly(s1, P); point_ref(4,:) = X';
 end
-% if room_t.typeid == 7
-%     keyboard
-% end
-% if room_t.typeid == 8
-%     keyboard
-% end
+if room_t.typeid == 7
+    % keyboard
+end
+if room_t.typeid == 8
+    % keyboard
+end
 if room_t.typeid == 9
     line_1 = polyfit([point(1,1) point(2,1)], [point(1,2) point(2,2)], 1);
     s1 = zeros(2,2); 
@@ -624,15 +624,19 @@ if room_t.typeid == 9
     X = seg2poly(s1, P); 
     point_ref(2,:) = X';
 end
-% if room_t.typeid == 10
-%     line_1 = polyfit([point(1,1) point(2,1)], [point(1,2) point(2,2)], 1);
-%     s1 = zeros(2,2); s1(:,1) = [point(1,1); point(1,2)];
-%     s1(:,2) = [(-1-line_1(2))/line_1(1);-1];
-%     X = seg2poly(s1, P); point_ref(1,:) = X';
-%     s1 = zeros(2,2); s1(:,1) = [point(2,1); point(2,2)];
-%     s1(:,2) = [(10000-line_1(2))/line_1(1);10000];
-%     X = seg2poly(s1, P); point_ref(2,:) = X';
-% end
+if room_t.typeid == 10
+    line_1 = polyfit([point(1,1) point(2,1)], [point(1,2) point(2,2)], 1);
+    s1 = zeros(2,2); 
+    s1(:,1) = [point(1,1); point(1,2)];
+    s1(:,2) = [(-1-line_1(2))/line_1(1);-1];
+    X = seg2poly(s1, P); 
+    point_ref(1,:) = X';
+    s1 = zeros(2,2); 
+    s1(:,1) = [point(2,1); point(2,2)];
+    s1(:,2) = [(10000-line_1(2))/line_1(1);10000];
+    X = seg2poly(s1, P); 
+    point_ref(2,:) = X';
+end
 
 % get segment
 data.type = room_t.typeid;
